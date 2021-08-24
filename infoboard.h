@@ -13,7 +13,6 @@ class Infoboard: public QWidget {
 
 public:
     explicit Infoboard(QWidget *parent = nullptr);
-    void addGameLog0(QString);
     void addGameLog1(int, int, int, int);
     void addGameLog2(int, int, int, int, int);
     void addGameLog3(int, int, int, int, int, int, int);
@@ -62,6 +61,7 @@ public slots:
     void getColorDecided(int, int);
     void getPlayerDecided();
     void getTimeRemainDecided(int);
+    void addGameLog(QString);
 };
 
 #endif // INFOBOARD_H

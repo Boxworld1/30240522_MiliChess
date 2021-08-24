@@ -4,20 +4,25 @@
 #include "gameboard.h"
 #include "infoboard.h"
 #include "gamelogic.h"
+#include "serverlogic.h"
 #include "chessboard.h"
 #include "client.h"
 #include "server.h"
+#include "player.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private:
+    int id;
     Infoboard* infoboard;
     Gameboard* gameboard;
     Chessboard* chessboard;
     GameLogic* gamelogic;
+    ServerLogic* serverlogic;
     Client* client;
     Server* server;
+    QVector<Player*> player = {nullptr, nullptr};
 
     void createGameStats();
     void createUI();
@@ -42,6 +47,9 @@ private slots:
     void connectToServer();
     void start();
     void surrender();
+
+public slots:
+    void newID(int);
 };
 
 #endif // MAINWINDOW_H

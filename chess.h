@@ -20,6 +20,7 @@ public:
     void changeHighlight(bool);
     void changePos(int, int);
     void changeStatus();
+    void changeInfo(int, int, int);
 };
 
 #endif // CHESS_H

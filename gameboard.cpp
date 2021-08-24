@@ -11,11 +11,16 @@ Gameboard::Gameboard(QWidget *parent): QWidget(parent) {
 
     createUI();
     isGameStarted = false;
+    connect(this, &Gameboard::tryMoving, gamelogic, &GameLogic::moveChess);
 }
 
 void Gameboard::setChessboard(Chessboard* chessboard) {
     this->chessboard = chessboard;
     render(0);
+}
+
+void Gameboard::setGameLogic(GameLogic* gamelogic) {
+    this->gamelogic = gamelogic;
 }
 
 void Gameboard::createUI() {
@@ -106,8 +111,7 @@ void Gameboard::render(int cmd) {
 void Gameboard::onChessClicked(int i, int j) {
 
     if (!isGameStarted) return;
-    QString msg = "c " + QString::number(i) + " " + QString::number(j);
-    emit sendMoved(msg);
+    emit tryMoving(i, j);
     render(1);
 
 }

@@ -19,7 +19,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
-    server.cpp
+    server.cpp \
+    serverlogic.cpp
 
 HEADERS += \
     chess.h \
@@ -31,7 +32,8 @@ HEADERS += \
     infoboard.h \
     mainwindow.h \
     player.h \
-    server.h
+    server.h \
+    serverlogic.h
 
 FORMS +=
 

@@ -1,12 +1,13 @@
 #include "clickablelabel.h"
 #include <QMouseEvent>
 
-ClickableLabel::ClickableLabel(QWidget* parent, Qt::WindowFlags f)
-    : QLabel(parent) {
+ClickableLabel::ClickableLabel(QWidget* parent, Qt::WindowFlags f): QLabel(parent) {
 
 }
 
-ClickableLabel::~ClickableLabel() {}
+ClickableLabel::~ClickableLabel() {
+
+}
 
 void ClickableLabel::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {

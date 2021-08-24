@@ -6,12 +6,15 @@ class Player{
     int landminesRemains;
     int color;
     int lastColor;
+    int id;
+
 public:
-    Player();
+    Player(int);
     void changeLastColor(int);
     void changeColor(int);
     void setTimeoutCount();
     void lostLandmines();
+    int getID();
     int getColor();
     int getTimeoutCount();
     int getLandminesRemains();

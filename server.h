@@ -30,6 +30,11 @@ public:
 signals:
     void moved(int, int);
     void start();
+    void changeChessNULL(int, int);
+    void changeChess(int, int, int, int, int);
+    void surrender(int);
+    void endGame(int);
+    void flopChess(int, int);
 
 private slots:
     void onNewConnection();

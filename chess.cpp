@@ -31,10 +31,18 @@ void Chess::changeHighlight(bool stat) {
 int Chess::getPosX() {
     return x;
 }
+
 int Chess::getPosY() {
     return y;
 }
+
 void Chess::changePos(int x, int y) {
     this->x = x;
     this->y = y;
+}
+
+void Chess::changeInfo(int status, int color, int type) {
+    this->status = status;
+    this->color = color;
+    this->type = type;
 }

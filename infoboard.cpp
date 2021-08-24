@@ -15,7 +15,7 @@ Infoboard::Infoboard(QWidget *parent): QWidget(parent) {
     createStatsGroup();
     createTimerGroup();
 
-    addGameLog0("----- New Game -----");
+    addGameLog("----- New Game -----");
 
 }
 
@@ -134,7 +134,7 @@ QString Infoboard::transferNumber(int num) {
     return target;
 }
 
-void Infoboard::addGameLog0(QString newText) {
+void Infoboard::addGameLog(QString newText) {
     text->append(newText);
 }
 

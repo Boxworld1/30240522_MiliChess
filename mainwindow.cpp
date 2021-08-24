@@ -19,28 +19,53 @@ void MainWindow::createNetWork() {
 
     server = new Server();
     client = new Client();
-    connect(gameboard, &Gameboard::sendMoved, client, &Client::sendDataSlot);
-    connect(server, &Server::moved, gamelogic, &GameLogic::moveChess);
+
+    connect(gamelogic, &GameLogic::sendData, client, &Client::sendDataSlot);
+    connect(serverlogic, &ServerLogic::sendData, server, &Server::sendDataSlot);
+
+    connect(client, &Client::changeID, this, &MainWindow::newID);
+    connect(client, &Client::colorDecided, infoboard, &Infoboard::getColorDecided);
+//    connect(gamelogic, &GameLogic::playerDecided, infoboard, &Infoboard::getPlayerDecided);
+    connect(serverlogic, &ServerLogic::timeRemainDecided, infoboard, &Infoboard::getTimeRemainDecided);
+    connect(client, &Client::sendMessage, infoboard, &Infoboard::addGameLog);
+    connect(client, &Client::onChangePlayer, gamelogic, &GameLogic::changePlayer);
+
     connect(server, &Server::start, gameboard, &Gameboard::show);
+    connect(server, &Server::changeChessNULL, serverlogic, &ServerLogic::changeChessNULL);
+    connect(server, &Server::changeChess, serverlogic, &ServerLogic::changeChess);
+    connect(server, &Server::surrender, serverlogic, &ServerLogic::getSurrender);
+    connect(server, &Server::endGame, serverlogic, &ServerLogic::endGame);
+    connect(server, &Server::flopChess, serverlogic, &ServerLogic::flopChess);
 
 }
 
 void MainWindow::createGameStats() {
+    id = 10;
 
     chessboard = new Chessboard();
     infoboard = new Infoboard();
     gameboard = new Gameboard();
     gamelogic = new GameLogic();
+    serverlogic = new ServerLogic();
+
+    for (int i = 0; i < 2; i++)
+        player[i] = new Player(i);
+
+    srand(time(NULL));
+    int first = rand() %2;
 
     gameboard->setChessboard(chessboard);
     gamelogic->setChessboard(chessboard);
     gamelogic->setInfoboard(infoboard);
+    serverlogic->setChessboard(chessboard);
 
-    connect(gamelogic, &GameLogic::colorDecided, infoboard, &Infoboard::getColorDecided);
-    connect(gamelogic, &GameLogic::playerDecided, infoboard, &Infoboard::getPlayerDecided);
-    connect(gamelogic, &GameLogic::timeRemainDecided, infoboard, &Infoboard::getTimeRemainDecided);
+    gamelogic->setNowPlayer(player[first]);
+    gamelogic->setNextPlayer(player[1 - first]);
+    serverlogic->setNowPlayer(player[first]);
+    serverlogic->setNextPlayer(player[1 - first]);
 
 }
+
 void MainWindow::createUI() {
     setWindowTitle(tr("Chess"));
 
@@ -100,7 +125,13 @@ void MainWindow::start() {
 }
 
 void MainWindow::surrender() {
+    client->sendDataSlot("f");
+}
 
+void MainWindow::newID(int id) {
+    this->id = id;
+    gamelogic->setID(id);
+    qDebug() << "my ID is "<< id << "\n";
 }
 
 MainWindow::~MainWindow() {

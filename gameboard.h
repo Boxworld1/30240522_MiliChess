@@ -14,6 +14,7 @@ class Gameboard: public QWidget {
 private:
     Infoboard* infoboard;
     Chessboard* chessboard;
+    GameLogic* gamelogic;
     ClickableLabel* chessLabel[5][12];
     void createUI();
     bool isGameStarted;
@@ -27,9 +28,10 @@ public:
     ~Gameboard();
     void render(int);
     void setChessboard(Chessboard*);
+    void setGameLogic(GameLogic*);
 
 signals:
-    void sendMoved(QString);
+    void tryMoving(int, int);
 
 public slots:
     void onChessClicked(int, int);

@@ -67,6 +67,7 @@ void Client::onConnection() {
 }
 
 void Client::onDisconnection() {
+    if (clientSocket == nullptr) return;
     clientSocket->disconnectFromHost();
     clientSocket = nullptr;
     QMessageBox::information(this, "", "Disconnection succeeded!");
@@ -80,7 +81,55 @@ void Client::onReadyRead() {
         QString msg = clientSocket->readLine();
         QTextStream in(&msg);
 
+        char cmd;
+        int x;
+        in >> cmd;
 
+        switch(cmd) {
+        case 'b': // change color
+            in >> x;
+            emit colorDecided(x, 3 - x);
+            break;
+
+        case 'i': // change id
+            in >> x;
+            emit changeID(x);
+            break;
+
+        case 'o': // change player
+            emit onChangePlayer();
+            break;
+
+        case 'g': // game over!
+            in >> x;
+            switch(x) {
+            case 0:
+                QMessageBox::information(this, "", "Congrats! You win!");
+                break;
+            case 1:
+                QMessageBox::information(this, "", "You Lose!");
+                break;
+            default:
+                break;
+            }
+            break;
+
+        case 'w': // warning
+            in >> x;
+            switch(x) {
+            case 0:
+                QMessageBox::warning(this, "", "Time out!");
+                break;
+            default:
+                break;
+            }
+            break;
+        case '0':
+            emit sendMessage(msg);
+            break;
+        default:
+            break;
+        }
 
     }
 }

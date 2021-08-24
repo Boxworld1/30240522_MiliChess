@@ -1,6 +1,6 @@
 #include "player.h"
 
-Player::Player(): timeoutCount(0), color(0), landminesRemains(3), lastColor(0) {
+Player::Player(int id): timeoutCount(0), color(0), landminesRemains(3), lastColor(0), id(id) {
 
 }
 
@@ -33,4 +33,8 @@ int Player::getLastColor() {
 
 void Player::setTimeoutCount() {
     timeoutCount++;
+}
+
+int Player::getID() {
+    return id;
 }

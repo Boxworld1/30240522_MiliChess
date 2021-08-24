@@ -13,6 +13,7 @@ void Server::onNewConnection() {
         clientSocket[i] = server->nextPendingConnection();
         connect(clientSocket[i], &QTcpSocket::readyRead, [=](){this->onReadyRead(i);});
         connect(clientSocket[i], &QTcpSocket::disconnected, [=](){this->onDisconnect(i);});
+        sendDataSlot("i " + QString::number(i), i);
         qDebug() << "New Connection: " << i << "\n";
         break;
     }
@@ -78,17 +79,34 @@ void Server::onReadyRead(int id) {
         QTextStream in(&msg);
 
         char cmd;
-        int x, y;
+        int x, y, status, color, type;
         in >> cmd;
 
         switch(cmd) {
         case 'c':
+            in >> x >> y >> status;
+            if (status == -1) {
+                emit changeChessNULL(x, y);//set nullptr
+            } else {
+                in >> color >> type;
+                emit changeChess(x, y, status, color, type);//set chess
+            }
+            break;
+        case 'd':
             in >> x >> y;
-            emit moved(x, y);
+            emit flopChess(x, y);
+            break;
+        case 'g':
+            in >> x;
+            emit endGame(x);
             break;
         case 's':
             ready[id] = 1;
             if (ready[0] + ready[1] == 2) gameStart();
+            break;
+        case 'f':
+            emit surrender(id);
+            //surrender
             break;
         default:
             break;

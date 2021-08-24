@@ -29,7 +29,10 @@ public:
     ~Client();
 
 signals:
-
+    void changeID(int);
+    void colorDecided(int, int);
+    void sendMessage(QString);
+    void onChangePlayer();
 
 private slots:
     void onConnection();
