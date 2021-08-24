@@ -1,0 +1,56 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="chessboard">img/chessboard.png</file>
+        <file alias="newchessboard">img/newchessboard.png</file>
+        <file>img/tbd.png</file>
+        <file alias="movable">img/moveable.png</file>
+        <file>img/01b.png</file>
+        <file>img/01bhl.png</file>
+        <file>img/01r.png</file>
+        <file>img/01rhl.png</file>
+        <file>img/02b.png</file>
+        <file>img/02bhl.png</file>
+        <file>img/02r.png</file>
+        <file>img/02rhl.png</file>
+        <file>img/03b.png</file>
+        <file>img/03bhl.png</file>
+        <file>img/03r.png</file>
+        <file>img/03rhl.png</file>
+        <file>img/04b.png</file>
+        <file>img/04bhl.png</file>
+        <file>img/04r.png</file>
+        <file>img/04rhl.png</file>
+        <file>img/05b.png</file>
+        <file>img/05bhl.png</file>
+        <file>img/05r.png</file>
+        <file>img/05rhl.png</file>
+        <file>img/06b.png</file>
+        <file>img/06bhl.png</file>
+        <file>img/06r.png</file>
+        <file>img/06rhl.png</file>
+        <file>img/07b.png</file>
+        <file>img/07bhl.png</file>
+        <file>img/07r.png</file>
+        <file>img/07rhl.png</file>
+        <file>img/08b.png</file>
+        <file>img/08bhl.png</file>
+        <file>img/08r.png</file>
+        <file>img/08rhl.png</file>
+        <file>img/09b.png</file>
+        <file>img/09bhl.png</file>
+        <file>img/09r.png</file>
+        <file>img/09rhl.png</file>
+        <file>img/10b.png</file>
+        <file>img/10bhl.png</file>
+        <file>img/10r.png</file>
+        <file>img/10rhl.png</file>
+        <file>img/11b.png</file>
+        <file>img/11bhl.png</file>
+        <file>img/11r.png</file>
+        <file>img/11rhl.png</file>
+        <file>img/12b.png</file>
+        <file>img/12bhl.png</file>
+        <file>img/12r.png</file>
+        <file>img/12rhl.png</file>
+    </qresource>
+</RCC>
