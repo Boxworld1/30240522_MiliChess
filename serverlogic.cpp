@@ -239,10 +239,10 @@ void ServerLogic::initialize(int id) {
     int firstPlayer = nowPlayer->getID();
     if (firstPlayer == 0) {
         emit sendData("q 0", id);
-//        emit sendData("q 0", 1 - id);
+        emit sendData("q 0", 1 - id);
     } else if (firstPlayer == 1) {
         emit sendData("q 1", id);
-//        emit sendData("q 1", 1 - id);
+        emit sendData("q 1", 1 - id);
     }
 
     //chessboard info (cmd = 1)
@@ -267,8 +267,6 @@ void ServerLogic::onMineBoomed(int id) {
         nextPlayer->lostLandmines();
     }
 
-    emit sendData("0 [Server] The enemy remains " + QString::number(nextPlayer->getLandminesRemains()) + " landmine(s)! ", 1 -id);
-    emit sendData("0 [Server] Your team remains " + QString::number(nextPlayer->getLandminesRemains()) + " landmine(s)! ", id);
     for (int i = 0; i < 2; i++)
         emit sendData("l " + QString::number(id), i);
 }
