@@ -17,9 +17,9 @@ Infoboard::Infoboard(QWidget *parent): QWidget(parent) {
     createTimerGroup();
 
     addGameLog("----- Hints -----");
-    addGameLog("Use \"Connect\"->\"Create Connection\" to setup server!");
-    addGameLog("Use \"Connect\"->\"Connect to Server\" to connect a server!");
-    addGameLog("If you are ready, click \"Play\"->\"Start\".");
+    addGameLog("Use \"Connect\"->\"Create Connection\" to setup server!\n");
+    addGameLog("Use \"Connect\"->\"Connect to Server\" to connect to a server!\n");
+    addGameLog("If you are ready, click \"Play\"->\"Start\".\n");
     addGameLog("----- New Game -----");
 }
 
@@ -162,39 +162,39 @@ void Infoboard::addGameLog(QString newText) {
 void Infoboard::addGameLog1(int turn, int color, int type, int pos) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] A " + transferColor(color) + " " + transferChessName(type) + " is generated at " + transferPos(pos) + ".";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::addGameLog2(int turn, int color, int type, int pos1, int pos2) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] A " + transferColor(color) + " " + transferChessName(type) + " moves from " + transferPos(pos1) + " to " + transferPos(pos2) + ".";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::addGameLog3(int turn, int color1, int type1, int color2, int type2, int pos1, int pos2) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] The " + transferColor(color1) + " " + transferChessName(type1) + " at " + transferPos(pos1) + " wiped out the ";
     gameLog = gameLog + transferColor(color2) + " " + transferChessName(type2) + " at " + transferPos(pos2) + ".";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::addGameLog4(int turn, int color1, int type1, int color2, int type2, int pos1, int pos2) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] The " + transferColor(color1) + " " + transferChessName(type1) + " at " + transferPos(pos1) + " and the ";
     gameLog = gameLog + transferColor(color2) + " " + transferChessName(type2) + " at " + transferPos(pos2) + " perish together!";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::addGameLog5(int turn, int color, int type) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] The " + transferColor(color) + " " + transferChessName(type) + " got the flag!";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::addGameLog6(int turn, int color) {
     QString gameLog;
     gameLog = "[Turn" + transferNumber(turn) + "] " + transferColor(color) + " side timeout!";
-    text->append(gameLog);
+    text->append(gameLog + "\n");
 }
 
 void Infoboard::setID(int id) {

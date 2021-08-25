@@ -17,6 +17,7 @@ void Server::onNewConnection() {
         sendDataSlot("i " + QString::number(i), i);
         if (i != id) {
             emit initialize(i);
+            sendDataSlot("0 [Server] New Connection!", id);
         }
         qDebug() << "New Connection: " << i << "\n";
         break;
@@ -50,6 +51,8 @@ void Server::serverUI() {
     connect(buttons, &QDialogButtonBox::rejected, this, [this]() {
         onDisconnect(0);
         onDisconnect(1);
+        sendDataSlot("m 2", 0);
+        sendDataSlot("m 2", 1);
         done(QDialog::Rejected);
     });
 
@@ -71,12 +74,18 @@ QString Server::getLocalIP() {
 }
 
 void Server::gameStart() {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++) {
+        sendDataSlot("0 [Server] Both sides are ready, game start!", i);
+        sendDataSlot("0 ----- Game Start -----", i);
         sendDataSlot("s", i);
+    }
     emit timerStart(20);
 }
 
 void Server::onDisconnect(int id) {
+    sendDataSlot("0 [Server] Client #" + QString::number(id) + " disconnected!", this->id);
+    sendDataSlot("0 [Server] Successfully disconnected!", id);
+    sendDataSlot("m 3 " + QString::number(id), this->id);
     clientSocket[id] = nullptr;
     qDebug() << id << " disconnected\n";
 }
@@ -122,12 +131,23 @@ void Server::onReadyRead(int id) {
 
         case 's':
             ready[id] = 1;
+            sendDataSlot("0 [Server] Enemy is ready!", 1 - id);
             if (ready[0] + ready[1] == 2) gameStart();
             break;
 
         case 'l':
             in >> x;
             emit mineBoomed(x);
+            break;
+        case 'm': // message
+            in >> x;
+            switch(x) {
+            case 0:
+                QMessageBox::information(this, "", "Client Disconnected!");
+                break;
+            default:
+                break;
+            }
             break;
 
         case '0':

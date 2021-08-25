@@ -59,22 +59,24 @@ void Client::createUI() {
 void Client::onConnection() {
     serverIP = textBox->text();
     if (!isConnected) {
+        if (clientSocket == nullptr) clientSocket = new QTcpSocket();
         clientSocket->connectToHost(QHostAddress(serverIP), 8888);
         if (clientSocket->waitForConnected(1000)) {
             QMessageBox::information(this, "", "Connection succeeded!");
             isConnected = true;
         } else {
-            clientSocket->disconnect();
+            onDisconnection();
             QMessageBox::warning(this, "", "Connection failed!");
         }
-
     }
 }
 
 void Client::onDisconnection() {
     if (clientSocket == nullptr) return;
+    isConnected = false;
     clientSocket->disconnectFromHost();
     clientSocket = nullptr;
+    sendDataSlot("m 0");
     QMessageBox::information(this, "", "Disconnection succeeded!");
 }
 
@@ -138,7 +140,11 @@ void Client::onReadyRead() {
                 QMessageBox::information(this, "", "Your color is Blue!");
                 break;
             case 2:
-
+                QMessageBox::information(this, "", "Server Closed!");
+                break;
+            case 3:
+                in >> y;
+                QMessageBox::information(this, "", "Client #" + QString::number(y) + " Closed!");
                 break;
             default:
                 break;
