@@ -43,6 +43,7 @@ public slots:
     void initialize(int);
     void timerStart(int);
     void changePlayer();
+    void onMineBoomed(int);
 };
 
 #endif // SERVERLOGIC_H

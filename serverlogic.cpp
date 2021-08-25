@@ -74,22 +74,21 @@ bool ServerLogic::checkMovable() {
             if (chess->getColor() != nowPlayer->getColor()) continue;
 
             int type = chess->getType();
-            if (type == 10 || type == 12) continue;;
+            if (type == 10 || type == 12) continue;
 
             int u = i + 5 * j;
             for (int i = 0; i < route[u].size(); i++) {
                 int v = route[u][i].first;
                 Chess* targetChess = chessboard->get(v % 5, v / 5);
-                int type2 = targetChess->getType();
+
                 if (targetChess == nullptr) return true;
                 if (targetChess->getStatus() == 1 && targetChess->getColor() != nowPlayer->getColor()) return true;
-
+                int type2 = targetChess->getType();
                 switch(type) {
                 case 11:
                     switch(type2) {
                     case 12:
                         if (nextPlayer->getLandminesRemains() == 0) return true;
-                        else return false;
                         break;
                     case 10:
                         return true;
@@ -103,7 +102,6 @@ bool ServerLogic::checkMovable() {
                     switch(type2) {
                     case 12:
                         if (nextPlayer->getLandminesRemains() == 0) return true;
-                        else return false;
                         break;
                     case 10:
                         return true;
@@ -112,7 +110,6 @@ bool ServerLogic::checkMovable() {
                         return true;
                         break;
                     default:
-                        return false;
                         break;
                     }
                     break;
@@ -120,15 +117,12 @@ bool ServerLogic::checkMovable() {
                     switch(type2) {
                     case 12:
                         if (nextPlayer->getLandminesRemains() == 0) return true;
-                        else return false;
                         break;
                     case 11: case 10:
-                        return false;
                         break;
                     default:
                         if (type == type2) return true;
                         else if (type < type2) return true;
-                        else return false;
                         break;
                     }
                     break;
@@ -203,19 +197,18 @@ void ServerLogic::flopChess(int x, int y) {
             nowPlayer->changeColor(color);
             emit sendData("b " + QString::number(color) + " " + QString::number(nowPlayer->getID()), nowPlayer->getID());
             emit sendData("0 [Server] Your color is " + QString((color == 1)? "Red": "Blue") + " now!", nowPlayer->getID());
-
+            if (color == 1) {
+                emit sendData("m 0", nowPlayer->getID());
+                emit sendData("m 1", nextPlayer->getID());
+            } else {
+                emit sendData("m 1", nowPlayer->getID());
+                emit sendData("m 0", nextPlayer->getID());
+            }
             nextPlayer->changeColor(3 - color);
             emit sendData("b " + QString::number(3 - color) + " " + QString::number(nextPlayer->getID()), nextPlayer->getID());
             emit sendData("0 [Server] Your color is " + QString((3 - color == 1)? "Red": "Blue") + " now!", nextPlayer->getID());
 
-//            if (turnCount % 2 == 1) {
-//                emit colorDecided(color, 3 - color);
-//            } else {
-//                emit colorDecided(3 - color, color);
-//            }
-
             isColorGived = true;
-//            QMessageBox::warning(this, "", "Your Color is " + QString((color == 1)? "Red": "Blue"));
 
         }
 
@@ -230,7 +223,11 @@ void ServerLogic::flopChess(int x, int y) {
 }
 
 void ServerLogic::getSurrender(int id) {
-    gameEnded(1, id);
+    if (turnCount >= 20) {
+        gameEnded(1, id);
+    } else {
+        emit sendData("w 1", id);
+    }
 }
 
 void ServerLogic::endGame(int id) {
@@ -261,4 +258,17 @@ void ServerLogic::initialize(int id) {
             emit sendData(msg, id);
 
         }
+}
+
+void ServerLogic::onMineBoomed(int id) {
+    if (nowPlayer->getID() == id) {
+        nowPlayer->lostLandmines();
+    } else {
+        nextPlayer->lostLandmines();
+    }
+
+    emit sendData("0 [Server] The enemy remains " + QString::number(nextPlayer->getLandminesRemains()) + " landmine(s)! ", 1 -id);
+    emit sendData("0 [Server] Your team remains " + QString::number(nextPlayer->getLandminesRemains()) + " landmine(s)! ", id);
+    for (int i = 0; i < 2; i++)
+        emit sendData("l " + QString::number(id), i);
 }

@@ -32,12 +32,19 @@ signals:
     void changeID(int);
     void colorDecided(int, int);
     void sendMessage(QString);
+    void sendMessage1(int, int, int, int);
+    void sendMessage2(int, int, int, int, int);
+    void sendMessage3(int, int, int, int, int, int, int);
+    void sendMessage4(int, int, int, int, int, int, int);
+    void sendMessage5(int, int, int);
+    void sendMessage6(int, int);
     void onChangePlayer();
     void changeChessNULL(int, int);
     void changeChess(int, int, int, int, int);
     void timeRemainDecided(int);
     void playerDecided(int);
     void start();
+    void mineBoomed(int);
     void firstPlayer(int);
     void changeColor(int, int);
 

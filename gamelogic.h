@@ -24,6 +24,8 @@ private:
     constexpr static bool postID[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int visitable[60];
 
+    QString QS(int);
+
 public:
     GameLogic(QWidget *parent = nullptr);
 
@@ -47,7 +49,8 @@ signals:
     void timeRemainDecided(int);
     void sendData(QString);
     void render(int);
-
+    void decYourMine();
+    void decEnemyMine();
 public slots:
     void setPlayer(int);
     void moveChess(int, int);
@@ -56,6 +59,7 @@ public slots:
     void onChangeChessNULL(int, int);
     void onChangeChess(int, int, int, int, int);
     void setNewColor(int, int);
+    void onMineBoomed(int);
 };
 
 #endif // GAMELOGIC_H

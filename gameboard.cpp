@@ -11,7 +11,7 @@ Gameboard::Gameboard(QWidget *parent): QWidget(parent) {
 
     createUI();
     isGameStarted = false;
-    connect(this, &Gameboard::tryMoving, gamelogic, &GameLogic::moveChess);
+
 }
 
 void Gameboard::setChessboard(Chessboard* chessboard) {
@@ -25,7 +25,7 @@ void Gameboard::setGameLogic(GameLogic* gamelogic) {
 
 void Gameboard::createUI() {
     QLabel* background = new QLabel(this);
-    QPixmap backgroundimage(":/newchessboard");
+    QPixmap backgroundimage(":/img/newchessboard.png");
     this->setFixedSize(435, 551);
 
     background->setGeometry(0, 0, 435, 551);
@@ -100,7 +100,7 @@ void Gameboard::render(int cmd) {
 
             if (chessboard->getMovableFlag(i, j) && chessboard->get(i, j) == nullptr) {
 
-                chessLabel[i][j]->setPixmap(QPixmap(":/movable"));
+                chessLabel[i][j]->setPixmap(QPixmap(":/img/moveable.png"));
 
             }
         }

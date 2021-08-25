@@ -13,7 +13,6 @@ class Infoboard: public QWidget {
 
 public:
     explicit Infoboard(QWidget *parent = nullptr);
-    void setFirstPlayer(int);
     void addGameLog1(int, int, int, int);
     void addGameLog2(int, int, int, int, int);
     void addGameLog3(int, int, int, int, int, int, int);
@@ -26,6 +25,8 @@ private:
     int id;
     int yourColor;
     int enemyColor;
+    int yourMine;
+    int enemyMine;
     int nowPlayer;
     int timeRemain;
 
@@ -61,6 +62,9 @@ private:
 
 public slots:
     void setID(int);
+    void setYourMine();
+    void setEnemyMine();
+    void setFirstPlayer(int);
     void getColorDecided(int, int);
     void getPlayerDecided(int);
     void getTimeRemainDecided(int);

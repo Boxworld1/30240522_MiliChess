@@ -8,6 +8,7 @@
 Infoboard::Infoboard(QWidget *parent): QWidget(parent) {
 
     yourColor = enemyColor = 0;
+    yourMine = enemyMine = 3;
     nowPlayer = 0;
     timeRemain = 20;
 
@@ -15,8 +16,11 @@ Infoboard::Infoboard(QWidget *parent): QWidget(parent) {
     createStatsGroup();
     createTimerGroup();
 
+    addGameLog("----- Hints -----");
+    addGameLog("Use \"Connect\"->\"Create Connection\" to setup server!");
+    addGameLog("Use \"Connect\"->\"Connect to Server\" to connect a server!");
+    addGameLog("If you are ready, click \"Play\"->\"Start\".");
     addGameLog("----- New Game -----");
-
 }
 
 void Infoboard::createUI() {
@@ -66,6 +70,21 @@ void Infoboard::createUI() {
 
 }
 
+void Infoboard::setFirstPlayer(int id) {
+    nowPlayer = id;
+    createStatsGroup();
+}
+
+void Infoboard::setYourMine() {
+    yourMine--;
+    createStatsGroup();
+}
+
+void Infoboard::setEnemyMine() {
+    enemyMine--;
+    createStatsGroup();
+}
+
 void Infoboard::getColorDecided(int your, int enemy) {
     yourColor = your;
     enemyColor = enemy;
@@ -82,6 +101,7 @@ void Infoboard::getTimeRemainDecided(int _timeRemain) {
     timeRemain = _timeRemain;
     createTimerGroup();
 }
+
 void Infoboard::createStatsGroup() {
 
     isPlayer1Turn->setStyleSheet("QLabel { background-color : " + colorID[yourColor] + "; color: white; border-radius: 15px}");
@@ -91,7 +111,7 @@ void Infoboard::createStatsGroup() {
 
     player1->setStyleSheet("QLabel { background-color : " + colorID[yourColor] + "; color : white; border-radius: 3px}");
     player1->setAlignment(Qt::AlignCenter);
-    player1->setText("You (" + transferColor(yourColor) + ")");
+    player1->setText("You (" + QString::number(yourMine) + ")");
 
     isPlayer2Turn->setStyleSheet("QLabel { background-color : " + colorID[enemyColor] + "; color: white; border-radius: 15px}");
     if (nowPlayer == id) {
@@ -100,7 +120,7 @@ void Infoboard::createStatsGroup() {
 
     player2->setStyleSheet("QLabel { background-color : " + colorID[enemyColor] + "; color : white; border-radius: 3px}");
     player2->setAlignment(Qt::AlignCenter);
-    player2->setText("Enemy (" + transferColor(enemyColor) + ")");
+    player2->setText("Enemy (" + QString::number(enemyMine) + ")");
 
 }
 
@@ -179,10 +199,6 @@ void Infoboard::addGameLog6(int turn, int color) {
 
 void Infoboard::setID(int id) {
     this->id = id;
-}
-
-void Infoboard::setFirstPlayer(int id) {
-    nowPlayer = id;
 }
 
 Infoboard::~Infoboard() {

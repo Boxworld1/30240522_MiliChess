@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file alias="chessboard">img/chessboard.png</file>
-        <file alias="newchessboard">img/newchessboard.png</file>
+        <file>img/newchessboard.png</file>
         <file>img/tbd.png</file>
-        <file alias="movable">img/moveable.png</file>
+        <file>img/moveable.png</file>
         <file>img/01b.png</file>
         <file>img/01bhl.png</file>
         <file>img/01r.png</file>

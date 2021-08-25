@@ -41,6 +41,7 @@ signals:
     void timerStart(int);
     void endTurn();
     void selfConnect(QString);
+    void mineBoomed(int);
 
 private slots:
     void onNewConnection();

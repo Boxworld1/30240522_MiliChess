@@ -125,7 +125,23 @@ void Server::onReadyRead(int id) {
             if (ready[0] + ready[1] == 2) gameStart();
             break;
 
+        case 'l':
+            in >> x;
+            emit mineBoomed(x);
+            break;
+
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+            sendDataSlot(msg, 0);
+            sendDataSlot(msg, 1);
+            break;
         default:
+
             break;
         }
 

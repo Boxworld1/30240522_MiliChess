@@ -87,7 +87,7 @@ void Client::onReadyRead() {
         QTextStream in(&msg);
 
         char cmd;
-        int x, y, status, color, type;
+        int x, y, status, color, type, a[10];
         in >> cmd;
 
         switch(cmd) {
@@ -128,12 +128,31 @@ void Client::onReadyRead() {
                 emit changeChess(x, y, status, color, type);//set chess
             }
             break;
+        case 'm': // message
+            in >> x;
+            switch(x) {
+            case 0:
+                QMessageBox::information(this, "", "Your color is Red!");
+                break;
+            case 1:
+                QMessageBox::information(this, "", "Your color is Blue!");
+                break;
+            case 2:
+
+                break;
+            default:
+                break;
+            }
+            break;
+
         case 'w': // warning
             in >> x;
             switch(x) {
             case 0:
                 QMessageBox::warning(this, "", "Time out!");
                 break;
+            case 1:
+                QMessageBox::warning(this, "", "You can't surrender now!");
             default:
                 break;
             }
@@ -158,8 +177,43 @@ void Client::onReadyRead() {
             emit start();
             break;
 
-        case '0': // send msg
-            emit sendMessage(msg);
+        case 'l':
+            in >> x;
+            emit mineBoomed(x);
+            break;
+
+        case '0':
+            emit sendMessage(msg.remove(0, 2));
+            break;
+
+        case '1':
+            for (int i = 0; i < 4; i++) in >> a[i];
+            emit sendMessage1(a[0], a[1], a[2], a[3]);
+            break;
+
+        case '2':
+            for (int i = 0; i < 5; i++) in >> a[i];
+            emit sendMessage2(a[0], a[1], a[2], a[3], a[4]);
+            break;
+
+        case '3':
+            for (int i = 0; i < 7; i++) in >> a[i];
+            emit sendMessage3(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+            break;
+
+        case '4':
+            for (int i = 0; i < 7; i++) in >> a[i];
+            emit sendMessage4(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+            break;
+
+        case '5':
+            for (int i = 0; i < 3; i++) in >> a[i];
+            emit sendMessage5(a[0], a[1], a[2]);
+            break;
+
+        case '6':
+            for (int i = 0; i < 2; i++) in >> a[i];
+            emit sendMessage6(a[0], a[1]);
             break;
 
         default:

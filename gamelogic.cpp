@@ -10,6 +10,7 @@ class Chess;
 GameLogic::GameLogic(QWidget *parent): QWidget(parent) {
     flag = false;
     chess1 = nullptr;
+    turnCount = 1;
 }
 
 void GameLogic::setChessboard(Chessboard* chessboard) {
@@ -49,7 +50,7 @@ void GameLogic::checkIsFirst() {
 void GameLogic::changePlayer() {
 
     turnCount++;
-//    emit playerDecided();
+
     Player* p = nowPlayer;
     nowPlayer = nextPlayer;
     nextPlayer = p;
@@ -157,13 +158,16 @@ void GameLogic::checkGameboard() {
             }
         }
 }
+
+QString GameLogic::QS(int x) {
+    return QString::number(x);
+}
+
 void GameLogic::moveChess1(Chess* chess, int x, int y) {
 
     if (chess == nullptr) return;
 
     if (chess->getStatus() == 0) {
-
-        infoboard->addGameLog1(turnCount, chess->getColor(), chess->getType(), x + 5 * y);
 
         emit sendData("d " + QString::number(x) + " " + QString::number(y));
 
@@ -217,47 +221,35 @@ void GameLogic::moveChess2(Chess* chess2, int x2, int y2) {
     case 1:
         changeChess(chess1, x2, y2);
         changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(chess1, x2, y2);
-//        chessboard->changeChess(nullptr, x1, y1);
-        infoboard->addGameLog2(turnCount, color1, type1, pos1, pos2);
+        emit sendData("2 " + QS(turnCount) + " " + QS(color1) + " " + QS(type1) + " " + QS(pos1) + " " + QS(pos2));
         break;
     case 2:
         changeChess(chess1, x2, y2);
         changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(chess1, x2, y2);
-//        chessboard->changeChess(nullptr, x1, y1);
-        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
+        emit sendData("3 " + QS(turnCount) + " " + QS(color1) + " " + QS(type1) + " " + QS(color2) + " " + QS(type2) + " " + QS(pos1) + " " + QS(pos2));
         break;
     case 3:
         changeChess(nullptr, x2, y2);
         changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(nullptr, x2, y2);
-        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
+        emit sendData("4 " + QS(turnCount) + " " + QS(color1) + " " + QS(type1) + " " + QS(color2) + " " + QS(type2) + " " + QS(pos1) + " " + QS(pos2));
         break;
     case 4:
-        nextPlayer->lostLandmines();
+        emit sendData("l " + QS(nextPlayer->getID()));
         changeChess(chess1, x2, y2);
         changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(chess1, x2, y2);
-//        chessboard->changeChess(nullptr, x1, y1);
-        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
-        infoboard->addGameLog("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
+        emit sendData("3 " + QS(turnCount) + " " + QS(color1) + " " + QS(type1) + " " + QS(color2) + " " + QS(type2) + " " + QS(pos1) + " " + QS(pos2));
         break;
     case 5:
-        nextPlayer->lostLandmines();
+        emit sendData("l " + QS(nextPlayer->getID()));
         changeChess(nullptr, x1, y1);
         changeChess(nullptr, x2, y2);
-//        chessboard->changeChess(nullptr, x1, y1);
-//        chessboard->changeChess(nullptr, x2, y2);
-        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
-        infoboard->addGameLog("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
+        emit sendData("4 " + QS(turnCount) + " " + QS(color1) + " " + QS(type1) + " " + QS(color2) + " " + QS(type2) + " " + QS(pos1) + " " + QS(pos2));
         break;
     case 10:
         int color = chess1->getColor(), type = chess1->getType();
         changeChess(nullptr, x1, y1);
         changeChess(chess1, x2, y2);
-        infoboard->addGameLog5(turnCount, color, type);
+        emit sendData("5 " + QS(turnCount) + " " + QS(color) + " " + QS(type));
         emit sendData("g 1");
         return;
     }
@@ -318,5 +310,18 @@ void GameLogic::setNewColor(int color, int playerID) {
     } else {
         nowPlayer->changeColor(3 - color);
         nextPlayer->changeColor(color);
+    }
+}
+
+void GameLogic::onMineBoomed(int playerID) {
+    if (nowPlayer->getID() == playerID) {
+        nowPlayer->lostLandmines();
+    } else {
+        nextPlayer->lostLandmines();
+    }
+    if (playerID == id) {
+        emit decYourMine();
+    } else {
+        emit decEnemyMine();
     }
 }

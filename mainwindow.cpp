@@ -28,6 +28,13 @@ void MainWindow::createNetWork() {
     connect(client, &Client::playerDecided, infoboard, &Infoboard::getPlayerDecided);
     connect(client, &Client::timeRemainDecided, infoboard, &Infoboard::getTimeRemainDecided);
     connect(client, &Client::sendMessage, infoboard, &Infoboard::addGameLog);
+    connect(client, &Client::sendMessage1, infoboard, &Infoboard::addGameLog1);
+    connect(client, &Client::sendMessage2, infoboard, &Infoboard::addGameLog2);
+    connect(client, &Client::sendMessage3, infoboard, &Infoboard::addGameLog3);
+    connect(client, &Client::sendMessage4, infoboard, &Infoboard::addGameLog4);
+    connect(client, &Client::sendMessage5, infoboard, &Infoboard::addGameLog5);
+    connect(client, &Client::sendMessage6, infoboard, &Infoboard::addGameLog6);
+    connect(client, &Client::firstPlayer, infoboard, &Infoboard::setFirstPlayer);
     connect(client, &Client::onChangePlayer, gamelogic, &GameLogic::changePlayer);
     connect(client, &Client::changeChessNULL, gamelogic, &GameLogic::onChangeChessNULL);
     connect(client, &Client::changeChess, gamelogic, &GameLogic::onChangeChess);
@@ -35,6 +42,7 @@ void MainWindow::createNetWork() {
     connect(client, &Client::start, gamelogic, &GameLogic::checkIsFirst);
     connect(client, &Client::firstPlayer, gamelogic, &GameLogic::setPlayer);
     connect(client, &Client::changeColor, gamelogic, &GameLogic::setNewColor);
+    connect(client, &Client::mineBoomed, gamelogic, &GameLogic::onMineBoomed);
 
     connect(server, &Server::selfConnect, client, &Client::setIP);
     connect(server, &Server::changeChessNULL, serverlogic, &ServerLogic::onChangeChessNULL);
@@ -45,6 +53,7 @@ void MainWindow::createNetWork() {
     connect(server, &Server::initialize, serverlogic, &ServerLogic::initialize);
     connect(server, &Server::timerStart, serverlogic, &ServerLogic::timerStart);
     connect(server, &Server::endTurn, serverlogic, &ServerLogic::changePlayer);
+    connect(server, &Server::mineBoomed, serverlogic, &ServerLogic::onMineBoomed);
 }
 
 void MainWindow::createGameStats() {
@@ -76,6 +85,8 @@ void MainWindow::createGameStats() {
 
     connect(gamelogic, &GameLogic::render, gameboard, &Gameboard::render);
     connect(gameboard, &Gameboard::tryMoving, gamelogic, &GameLogic::moveChess);
+    connect(gamelogic, &GameLogic::decYourMine, infoboard, &Infoboard::setYourMine);
+    connect(gamelogic, &GameLogic::decEnemyMine, infoboard, &Infoboard::setEnemyMine);
 }
 
 void MainWindow::createUI() {
