@@ -32,6 +32,7 @@ void MainWindow::createNetWork() {
     connect(client, &Client::changeChessNULL, gamelogic, &GameLogic::onChangeChessNULL);
     connect(client, &Client::changeChess, gamelogic, &GameLogic::onChangeChess);
     connect(client, &Client::start, gameboard, &Gameboard::show);
+    connect(client, &Client::start, gamelogic, &GameLogic::checkIsFirst);
     connect(client, &Client::firstPlayer, gamelogic, &GameLogic::setPlayer);
     connect(client, &Client::changeColor, gamelogic, &GameLogic::setNewColor);
 

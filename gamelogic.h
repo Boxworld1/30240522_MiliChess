@@ -51,6 +51,7 @@ signals:
 public slots:
     void setPlayer(int);
     void moveChess(int, int);
+    void checkIsFirst();
     void changePlayer();
     void onChangeChessNULL(int, int);
     void onChangeChess(int, int, int, int, int);

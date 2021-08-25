@@ -41,6 +41,11 @@ void GameLogic::setID(int id) {
     this->id = id;
 }
 
+void GameLogic::checkIsFirst() {
+    if (nowPlayer->getID() == id) {
+        QMessageBox::information(this, "", "You are the initiative!");
+    }
+}
 void GameLogic::changePlayer() {
 
     turnCount++;

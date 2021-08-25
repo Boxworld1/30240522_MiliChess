@@ -58,8 +58,11 @@ void ServerLogic::changePlayer() {
         emit sendData("p " + QString::number(nowPlayer->getID()), i);
     }
 
-//    checkMovable();
-    timerStart(20);
+    if (checkMovable()) {
+        timerStart(20);
+    } else {
+        gameEnded(1, nowPlayer->getID());
+    }
 }
 
 bool ServerLogic::checkMovable() {
@@ -73,64 +76,64 @@ bool ServerLogic::checkMovable() {
             int type = chess->getType();
             if (type == 10 || type == 12) continue;;
 
-//            int u = i + 5 * j;
-//            for (int i = 0; i < route[u].size(); i++) {
-//                int v = route[u][i].first;
-//                Chess* targetChess = chessboard->get(v % 5, v / 5);
-//                int type2 = targetChess->getType();
-//                if (targetChess == nullptr) return true;
-//                if (targetChess->getStatus() == 1 && targetChess->getColor() != nowPlayer->getColor()) return true;
+            int u = i + 5 * j;
+            for (int i = 0; i < route[u].size(); i++) {
+                int v = route[u][i].first;
+                Chess* targetChess = chessboard->get(v % 5, v / 5);
+                int type2 = targetChess->getType();
+                if (targetChess == nullptr) return true;
+                if (targetChess->getStatus() == 1 && targetChess->getColor() != nowPlayer->getColor()) return true;
 
-//                switch(type) {
-//                case 11:
-//                    switch(type2) {
-//                    case 12:
-//                        if (nextPlayer->getLandminesRemains() == 0) return true;
-//                        else return false;
-//                        break;
-//                    case 10:
-//                        return true;
-//                        break;
-//                    default:
-//                        return true;
-//                        break;
-//                    }
-//                    break;
-//                case 9:
-//                    switch(type2) {
-//                    case 12:
-//                        if (nextPlayer->getLandminesRemains() == 0) return true;
-//                        else return false;
-//                        break;
-//                    case 10:
-//                        return true;
-//                        break;
-//                    case 9:
-//                        return true;
-//                        break;
-//                    default:
-//                        return false;
-//                        break;
-//                    }
-//                    break;
-//                default:
-//                    switch(type2) {
-//                    case 12:
-//                        if (nextPlayer->getLandminesRemains() == 0) return true;
-//                        else return false;
-//                        break;
-//                    case 11: case 10:
-//                        return false;
-//                        break;
-//                    default:
-//                        if (type == type2) return true;
-//                        else if (type < type2) return true;
-//                        else return false;
-//                        break;
-//                    }
-//                    break;
-//                }
-//            }
+                switch(type) {
+                case 11:
+                    switch(type2) {
+                    case 12:
+                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        else return false;
+                        break;
+                    case 10:
+                        return true;
+                        break;
+                    default:
+                        return true;
+                        break;
+                    }
+                    break;
+                case 9:
+                    switch(type2) {
+                    case 12:
+                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        else return false;
+                        break;
+                    case 10:
+                        return true;
+                        break;
+                    case 9:
+                        return true;
+                        break;
+                    default:
+                        return false;
+                        break;
+                    }
+                    break;
+                default:
+                    switch(type2) {
+                    case 12:
+                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        else return false;
+                        break;
+                    case 11: case 10:
+                        return false;
+                        break;
+                    default:
+                        if (type == type2) return true;
+                        else if (type < type2) return true;
+                        else return false;
+                        break;
+                    }
+                    break;
+                }
+            }
        }
 
     return false;
