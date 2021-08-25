@@ -21,20 +21,26 @@ private:
     void serverUI();
 
     bool ready[2];
+    int id;
 
 public:
     explicit Server(QDialog *parent = nullptr);
+    void setID(int);
     void showUI();
     void sendDataSlot(QString, int);
 
 signals:
     void moved(int, int);
     void start();
-    void changeChessNULL(int, int);
-    void changeChess(int, int, int, int, int);
+    void changeChessNULL(QString, int, int);
+    void changeChess(QString, int, int, int, int, int);
     void surrender(int);
     void endGame(int);
     void flopChess(int, int);
+    void initialize(int);
+    void timerStart(int);
+    void endTurn();
+    void selfConnect(QString);
 
 private slots:
     void onNewConnection();

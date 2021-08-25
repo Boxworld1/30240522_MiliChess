@@ -8,9 +8,9 @@ class Chess{
     int color; //red = 1, blue = 2
     int x, y;
     bool highlighted;
-    Chessboard* parent;
 public:
-    Chess(Chessboard*, int, int, int, int);
+    Chess();
+    Chess(int, int, int, int, int);
     int getColor();
     int getStatus();
     int getType();

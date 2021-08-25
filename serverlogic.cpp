@@ -26,13 +26,17 @@ void ServerLogic::setNextPlayer(Player* player) {
 void ServerLogic::timerStart(int time) {
     timeRemain = time;
     timer->start(1000);
-    emit timeRemainDecided(timeRemain);
+
+    for (int i = 0; i < 2; i++)
+        emit sendData("t " + QString::number(timeRemain), i);
 }
 
 void ServerLogic::timeUpdate() {
     timer->stop();
     timeRemain--;
-    emit timeRemainDecided(timeRemain);
+
+    for (int i = 0; i < 2; i++)
+        emit sendData("t " + QString::number(timeRemain), i);
 
     if (timeRemain <= 0) {
         timeover();
@@ -44,16 +48,92 @@ void ServerLogic::timeUpdate() {
 void ServerLogic::changePlayer() {
     timer->stop();
 
-    for (int i = 0; i < 2; i++)
-        emit sendData("o", i);
-
     turnCount++;
-//    emit playerDecided();
     Player* p = nowPlayer;
     nowPlayer = nextPlayer;
     nextPlayer = p;
 
+    for (int i = 0; i < 2; i++) {
+        emit sendData("o", i);
+        emit sendData("p " + QString::number(nowPlayer->getID()), i);
+    }
+
+//    checkMovable();
     timerStart(20);
+}
+
+bool ServerLogic::checkMovable() {
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 12; j++) {
+            Chess *chess = chessboard->get(i,j);
+            if (chess == nullptr) continue;
+            if (chess->getStatus() == 0) return true;
+            if (chess->getColor() != nowPlayer->getColor()) continue;
+
+            int type = chess->getType();
+            if (type == 10 || type == 12) continue;;
+
+//            int u = i + 5 * j;
+//            for (int i = 0; i < route[u].size(); i++) {
+//                int v = route[u][i].first;
+//                Chess* targetChess = chessboard->get(v % 5, v / 5);
+//                int type2 = targetChess->getType();
+//                if (targetChess == nullptr) return true;
+//                if (targetChess->getStatus() == 1 && targetChess->getColor() != nowPlayer->getColor()) return true;
+
+//                switch(type) {
+//                case 11:
+//                    switch(type2) {
+//                    case 12:
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        else return false;
+//                        break;
+//                    case 10:
+//                        return true;
+//                        break;
+//                    default:
+//                        return true;
+//                        break;
+//                    }
+//                    break;
+//                case 9:
+//                    switch(type2) {
+//                    case 12:
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        else return false;
+//                        break;
+//                    case 10:
+//                        return true;
+//                        break;
+//                    case 9:
+//                        return true;
+//                        break;
+//                    default:
+//                        return false;
+//                        break;
+//                    }
+//                    break;
+//                default:
+//                    switch(type2) {
+//                    case 12:
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        else return false;
+//                        break;
+//                    case 11: case 10:
+//                        return false;
+//                        break;
+//                    default:
+//                        if (type == type2) return true;
+//                        else if (type < type2) return true;
+//                        else return false;
+//                        break;
+//                    }
+//                    break;
+//                }
+//            }
+       }
+
+    return false;
 }
 
 void ServerLogic::timeover() {
@@ -86,15 +166,21 @@ void ServerLogic::gameEnded(int cmd, int id) {
     }
 }
 
-void ServerLogic::changeChessNULL(int x, int y) {
+void ServerLogic::onChangeChessNULL(QString msg, int x, int y) {
+//    delete chessboard->get(x, y);
     chessboard->changeChess(nullptr, x, y);
+
+    for (int i = 0; i < 2; i++)
+        emit sendData(msg, i);
 }
 
-void ServerLogic::changeChess(int x, int y, int status, int color, int type) {
-    Chess *chess = chessboard->get(x, y);
-    chess->changePos(x, y);
-    chess->changeInfo(status, color, type);
+void ServerLogic::onChangeChess(QString msg, int x, int y, int status, int color, int type) {
+//    delete chessboard->get(x, y);
+    Chess *chess = new Chess(x, y, type, color, status);
     chessboard->changeChess(chess, x, y);
+
+    for (int i = 0; i < 2; i++)
+        emit sendData(msg, i);
 }
 
 void ServerLogic::flopChess(int x, int y) {
@@ -103,6 +189,7 @@ void ServerLogic::flopChess(int x, int y) {
     chess->changeStatus();
     int color = chess->getColor();
     int type = chess->getType();
+    int status = chess->getStatus();
 
     for (int i = 0; i < 2; i++)
         emit sendData("1 " + QString::number(turnCount) + " " + QString::number(color) + " " + QString::number(type) + " " + QString::number(x + 5 * y), i);
@@ -111,11 +198,11 @@ void ServerLogic::flopChess(int x, int y) {
         if (nowPlayer->getLastColor() == color) {
 
             nowPlayer->changeColor(color);
-            emit sendData("b " + QString::number(color), nowPlayer->getID());
+            emit sendData("b " + QString::number(color) + " " + QString::number(nowPlayer->getID()), nowPlayer->getID());
             emit sendData("0 [Server] Your color is " + QString((color == 1)? "Red": "Blue") + " now!", nowPlayer->getID());
 
             nextPlayer->changeColor(3 - color);
-            emit sendData("b " + QString::number(3 - color) + " ", nextPlayer->getID());
+            emit sendData("b " + QString::number(3 - color) + " " + QString::number(nextPlayer->getID()), nextPlayer->getID());
             emit sendData("0 [Server] Your color is " + QString((3 - color == 1)? "Red": "Blue") + " now!", nextPlayer->getID());
 
 //            if (turnCount % 2 == 1) {
@@ -132,6 +219,10 @@ void ServerLogic::flopChess(int x, int y) {
         nowPlayer->changeLastColor(color);
     }
 
+    QString msg = "c " + QString::number(x) + " " + QString::number(y) + " " + QString::number(status) + " " + QString::number(color) + " " + QString::number(type);
+    for (int i = 0; i < 2; i++)
+        emit sendData(msg, i);
+
     changePlayer();
 }
 
@@ -141,4 +232,30 @@ void ServerLogic::getSurrender(int id) {
 
 void ServerLogic::endGame(int id) {
     gameEnded(0, nowPlayer->getID());
+}
+
+void ServerLogic::initialize(int id) {
+    //player info (cmd = 0)
+    int firstPlayer = nowPlayer->getID();
+    if (firstPlayer == 0) {
+        emit sendData("q 0", id);
+//        emit sendData("q 0", 1 - id);
+    } else if (firstPlayer == 1) {
+        emit sendData("q 1", id);
+//        emit sendData("q 1", 1 - id);
+    }
+
+    //chessboard info (cmd = 1)
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 12; j++) {
+            Chess* nowChess = chessboard->get(i, j);
+            if (nowChess == nullptr) continue;
+            QString pos = QString::number(i) + " " + QString::number(j);
+            QString color = QString::number(nowChess->getColor());
+            QString status = QString::number(nowChess->getStatus());
+            QString type = QString::number(nowChess->getType());
+            QString msg = "c " + pos + " " + status + " " + color + " " + type;
+            emit sendData(msg, id);
+
+        }
 }

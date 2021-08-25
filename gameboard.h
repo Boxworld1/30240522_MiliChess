@@ -26,7 +26,6 @@ private:
 public:
     Gameboard(QWidget *parent = nullptr);
     ~Gameboard();
-    void render(int);
     void setChessboard(Chessboard*);
     void setGameLogic(GameLogic*);
 
@@ -34,6 +33,7 @@ signals:
     void tryMoving(int, int);
 
 public slots:
+    void render(int);
     void onChessClicked(int, int);
     void show();
 };

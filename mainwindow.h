@@ -15,6 +15,8 @@ class MainWindow : public QMainWindow {
 
 private:
     int id;
+    int first;
+
     Infoboard* infoboard;
     Gameboard* gameboard;
     Chessboard* chessboard;

@@ -13,6 +13,11 @@ Client::Client(QDialog *parent): QDialog(parent) {
     isConnected = false;
 }
 
+void Client::setIP(QString ip) {
+    textBox->setText(ip);
+    onConnection();
+}
+
 void Client::showUI() {
     show();
 }
@@ -82,12 +87,13 @@ void Client::onReadyRead() {
         QTextStream in(&msg);
 
         char cmd;
-        int x;
+        int x, y, status, color, type;
         in >> cmd;
 
         switch(cmd) {
         case 'b': // change color
-            in >> x;
+            in >> x >> y;
+            emit changeColor(x, y); // x = color, y = id;
             emit colorDecided(x, 3 - x);
             break;
 
@@ -113,7 +119,15 @@ void Client::onReadyRead() {
                 break;
             }
             break;
-
+        case 'c':
+            in >> x >> y >> status;
+            if (status == -1) {
+                emit changeChessNULL(x, y);//set nullptr
+            } else {
+                in >> color >> type;
+                emit changeChess(x, y, status, color, type);//set chess
+            }
+            break;
         case 'w': // warning
             in >> x;
             switch(x) {
@@ -124,13 +138,34 @@ void Client::onReadyRead() {
                 break;
             }
             break;
-        case '0':
+
+        case 't': // timer
+            in >> x;
+            emit timeRemainDecided(x);
+            break;
+
+        case 'p': // now player
+            in >> x;
+            emit playerDecided(x);
+            break;
+
+        case 'q': // change first player
+            in >> x;
+            emit firstPlayer(x);
+            break;
+
+        case 's': // game start
+            emit start();
+            break;
+
+        case '0': // send msg
             emit sendMessage(msg);
             break;
+
         default:
             break;
         }
-
+        qDebug() << "client recv: " << msg;
     }
 }
 
@@ -139,6 +174,6 @@ void Client::sendDataSlot(QString msg) {
     str.append('\n');
     if (clientSocket != nullptr) {
         clientSocket->write(str);
-        qDebug() << str;
+        qDebug() << "client send: " << str;
     }
 }

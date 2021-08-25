@@ -33,6 +33,16 @@ signals:
     void colorDecided(int, int);
     void sendMessage(QString);
     void onChangePlayer();
+    void changeChessNULL(int, int);
+    void changeChess(int, int, int, int, int);
+    void timeRemainDecided(int);
+    void playerDecided(int);
+    void start();
+    void firstPlayer(int);
+    void changeColor(int, int);
+
+public slots:
+    void setIP(QString);
 
 private slots:
     void onConnection();

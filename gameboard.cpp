@@ -43,7 +43,7 @@ void Gameboard::render(int cmd) {
     for (int i = 0; i < 5; i++)
         for (int j = 0; j < 12; j++) {
 
-            Chess* chess = chessboard->get(i, j);
+            Chess* chess = chessboard->get(i, j);  
 
             int x = x0 + dx * i;
             int y = y0 + dy * j;
@@ -106,6 +106,7 @@ void Gameboard::render(int cmd) {
         }
 
     update();
+
 }
 
 void Gameboard::onChessClicked(int i, int j) {

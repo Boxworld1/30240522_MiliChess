@@ -46,10 +46,15 @@ signals:
     void playerDecided();
     void timeRemainDecided(int);
     void sendData(QString);
+    void render(int);
 
 public slots:
+    void setPlayer(int);
     void moveChess(int, int);
     void changePlayer();
+    void onChangeChessNULL(int, int);
+    void onChangeChess(int, int, int, int, int);
+    void setNewColor(int, int);
 };
 
 #endif // GAMELOGIC_H

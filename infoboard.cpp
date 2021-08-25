@@ -72,8 +72,9 @@ void Infoboard::getColorDecided(int your, int enemy) {
     createStatsGroup();
 }
 
-void Infoboard::getPlayerDecided() {
-    nowPlayer = 1 - nowPlayer;
+void Infoboard::getPlayerDecided(int nPlayer) {
+    qDebug() << "My id = " << id << " Now = " << nowPlayer << "\n";
+    nowPlayer = nPlayer;
     createStatsGroup();
 }
 
@@ -84,7 +85,7 @@ void Infoboard::getTimeRemainDecided(int _timeRemain) {
 void Infoboard::createStatsGroup() {
 
     isPlayer1Turn->setStyleSheet("QLabel { background-color : " + colorID[yourColor] + "; color: white; border-radius: 15px}");
-    if (nowPlayer == 1) {
+    if (nowPlayer != id) {
         isPlayer1Turn->setStyleSheet("QLabel {}");
     }
 
@@ -93,7 +94,7 @@ void Infoboard::createStatsGroup() {
     player1->setText("You (" + transferColor(yourColor) + ")");
 
     isPlayer2Turn->setStyleSheet("QLabel { background-color : " + colorID[enemyColor] + "; color: white; border-radius: 15px}");
-    if (nowPlayer == 0) {
+    if (nowPlayer == id) {
         isPlayer2Turn->setStyleSheet("QLabel {}");
     }
 
@@ -175,6 +176,15 @@ void Infoboard::addGameLog6(int turn, int color) {
     gameLog = "[Turn" + transferNumber(turn) + "] " + transferColor(color) + " side timeout!";
     text->append(gameLog);
 }
+
+void Infoboard::setID(int id) {
+    this->id = id;
+}
+
+void Infoboard::setFirstPlayer(int id) {
+    nowPlayer = id;
+}
+
 Infoboard::~Infoboard() {
 
 }

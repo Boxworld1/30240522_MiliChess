@@ -1,7 +1,7 @@
 #include "chess.h"
 
-Chess::Chess(Chessboard* parent, int x, int y, int type, int color): x(x), y(y), type(type), color(color), status(0), highlighted(false) {
-    this->parent = parent;
+Chess::Chess(int x, int y, int type, int color, int status): x(x), y(y), type(type), color(color), status(status), highlighted(false) {
+
 }
 
 int Chess::getColor() {

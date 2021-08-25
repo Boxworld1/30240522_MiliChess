@@ -20,6 +20,15 @@ void GameLogic::setInfoboard(Infoboard* infoboard) {
     this->infoboard = infoboard;
 }
 
+void GameLogic::setPlayer(int first) {
+    if (nowPlayer->getID() == first) return;
+    else {
+        Player* p = nowPlayer;
+        nowPlayer = nextPlayer;
+        nextPlayer = p;
+    }
+}
+
 void GameLogic::setNowPlayer(Player* player) {
     nowPlayer = player;
 }
@@ -48,6 +57,7 @@ void GameLogic::changePlayer() {
         for (int j = 0; j < 12; j++)
             chessboard->changeMovableFlag(i, j, false);
 
+    emit render(1);
 
 }
 
@@ -148,6 +158,8 @@ void GameLogic::moveChess1(Chess* chess, int x, int y) {
 
     if (chess->getStatus() == 0) {
 
+        infoboard->addGameLog1(turnCount, chess->getColor(), chess->getType(), x + 5 * y);
+
         emit sendData("d " + QString::number(x) + " " + QString::number(y));
 
     } else if (chess->getColor() == nowPlayer->getColor()) {
@@ -202,21 +214,21 @@ void GameLogic::moveChess2(Chess* chess2, int x2, int y2) {
         changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(chess1, x2, y2);
 //        chessboard->changeChess(nullptr, x1, y1);
-//        infoboard->addGameLog2(turnCount, color1, type1, pos1, pos2);
+        infoboard->addGameLog2(turnCount, color1, type1, pos1, pos2);
         break;
     case 2:
         changeChess(chess1, x2, y2);
         changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(chess1, x2, y2);
 //        chessboard->changeChess(nullptr, x1, y1);
-//        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
+        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
         break;
     case 3:
         changeChess(nullptr, x2, y2);
         changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(nullptr, x2, y2);
-//        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
+        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
         break;
     case 4:
         nextPlayer->lostLandmines();
@@ -224,8 +236,8 @@ void GameLogic::moveChess2(Chess* chess2, int x2, int y2) {
         changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(chess1, x2, y2);
 //        chessboard->changeChess(nullptr, x1, y1);
-//        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
-//        infoboard->addGameLog0("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
+        infoboard->addGameLog3(turnCount, color1, type1, color2, type2, pos1, pos2);
+        infoboard->addGameLog("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
         break;
     case 5:
         nextPlayer->lostLandmines();
@@ -233,18 +245,19 @@ void GameLogic::moveChess2(Chess* chess2, int x2, int y2) {
         changeChess(nullptr, x2, y2);
 //        chessboard->changeChess(nullptr, x1, y1);
 //        chessboard->changeChess(nullptr, x2, y2);
-//        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
-//        infoboard->addGameLog0("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
+        infoboard->addGameLog4(turnCount, color1, type1, color2, type2, pos1, pos2);
+        infoboard->addGameLog("[Server] The enemy remains " + QString(QChar(nextPlayer->getLandminesRemains() + 48)) + " landmine(s)! ");
         break;
     case 10:
-//        int color = chess1->getColor(), type = chess1->getType();
+        int color = chess1->getColor(), type = chess1->getType();
         changeChess(nullptr, x1, y1);
         changeChess(chess1, x2, y2);
-//        infoboard->addGameLog5(turnCount, color, type);
+        infoboard->addGameLog5(turnCount, color, type);
         emit sendData("g 1");
         return;
     }
-    changePlayer();
+    emit sendData("e");
+//    changePlayer();
 }
 
 void GameLogic::failMove() {
@@ -265,6 +278,7 @@ void GameLogic::moveChess(int i, int j) {
     Chess* chess = chessboard->get(i, j);
     if (flag == false) moveChess1(chess, i, j);
     else moveChess2(chess, i, j);
+
 }
 
 void GameLogic::changeChess(Chess* nowChess, int x, int y) {
@@ -278,5 +292,26 @@ void GameLogic::changeChess(Chess* nowChess, int x, int y) {
         QString type = QString::number(nowChess->getType());
         QString msg = "c " + pos + " " + status + " " + color + " " + type;
         emit sendData(msg);
+    }
+}
+
+void GameLogic::onChangeChessNULL(int x, int y) {
+    chessboard->changeChess(nullptr, x, y);
+    emit render(1);
+}
+
+void GameLogic::onChangeChess(int x, int y, int status, int color, int type) {
+    Chess *chess = new Chess(x, y, type, color, status);
+    chessboard->changeChess(chess, x, y);
+    emit render(1);
+}
+
+void GameLogic::setNewColor(int color, int playerID) {
+    if (nowPlayer->getID() == playerID) {
+        nowPlayer->changeColor(color);
+        nextPlayer->changeColor(3 - color);
+    } else {
+        nowPlayer->changeColor(3 - color);
+        nextPlayer->changeColor(color);
     }
 }

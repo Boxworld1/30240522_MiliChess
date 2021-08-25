@@ -28,7 +28,7 @@ Chessboard::Chessboard() {
     for (int x = 0; x < 5; x++)
         for (int y = 0; y < 12; y++) {
             if (isPost(x, y)) chess[x][y] = nullptr;
-            else chess[x][y] = new Chess(this, x, y, vec[cnt].first, vec[cnt++].second);
+            else chess[x][y] = new Chess(x, y, vec[cnt].first, vec[cnt++].second, 0);
         }
 
     for (int i = 0; i < 5; i++)

@@ -5,6 +5,7 @@ Server::Server(QDialog *parent) : QDialog(parent) {
     connect(server, &QTcpServer::newConnection, this, &Server::onNewConnection);
     serverUI();
     ready[0] = ready[1] = false;
+    id = 0;
 }
 
 void Server::onNewConnection() {
@@ -14,9 +15,16 @@ void Server::onNewConnection() {
         connect(clientSocket[i], &QTcpSocket::readyRead, [=](){this->onReadyRead(i);});
         connect(clientSocket[i], &QTcpSocket::disconnected, [=](){this->onDisconnect(i);});
         sendDataSlot("i " + QString::number(i), i);
+        if (i != id) {
+            emit initialize(i);
+        }
         qDebug() << "New Connection: " << i << "\n";
         break;
     }
+}
+
+void Server::setID(int id) {
+    this->id = id;
 }
 
 void Server::showUI() {
@@ -35,6 +43,7 @@ void Server::serverUI() {
 
     connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
         server->listen(QHostAddress::Any, 8888);
+        emit selfConnect(getLocalIP());
         done(QDialog::Accepted);
     });
 
@@ -62,7 +71,9 @@ QString Server::getLocalIP() {
 }
 
 void Server::gameStart() {
-    emit start();
+    for (int i = 0; i < 2; i++)
+        sendDataSlot("s", i);
+    emit timerStart(20);
 }
 
 void Server::onDisconnect(int id) {
@@ -86,33 +97,39 @@ void Server::onReadyRead(int id) {
         case 'c':
             in >> x >> y >> status;
             if (status == -1) {
-                emit changeChessNULL(x, y);//set nullptr
+                emit changeChessNULL(msg, x, y);//set nullptr
             } else {
                 in >> color >> type;
-                emit changeChess(x, y, status, color, type);//set chess
+                emit changeChess(msg, x, y, status, color, type);//set chess
             }
             break;
+
         case 'd':
             in >> x >> y;
             emit flopChess(x, y);
             break;
+        case 'e':
+            emit endTurn();
+            break;
+        case 'f':
+            emit surrender(id);
+            break;
+
         case 'g':
             in >> x;
             emit endGame(x);
             break;
+
         case 's':
             ready[id] = 1;
             if (ready[0] + ready[1] == 2) gameStart();
             break;
-        case 'f':
-            emit surrender(id);
-            //surrender
-            break;
+
         default:
             break;
         }
 
-        qDebug() << "recv: " << msg;
+        qDebug() << "server recv: " << msg;
     }
 }
 
@@ -121,6 +138,6 @@ void Server::sendDataSlot(QString msg, int id) {
     str.append('\n');
     if (clientSocket[id] != nullptr) {
         clientSocket[id]->write(str);
-        qDebug() << str;
+        qDebug() << "server send: " << str;
     }
 }
