@@ -94,7 +94,7 @@ void Server::onReadyRead(int id) {
 
     if (clientSocket[id] == nullptr) return;
 
-    while(clientSocket[id]->canReadLine()) {
+    while(clientSocket[id] && clientSocket[id]->canReadLine()) {
         QString msg = clientSocket[id]->readLine();
         QTextStream in(&msg);
 
