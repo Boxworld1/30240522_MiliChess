@@ -11,6 +11,7 @@ GameLogic::GameLogic(QWidget *parent): QWidget(parent) {
     flag = false;
     chess1 = nullptr;
     turnCount = 1;
+    mines[0] = mines[1] = 3;
 }
 
 void GameLogic::setChessboard(Chessboard* chessboard) {
@@ -47,6 +48,17 @@ void GameLogic::checkIsFirst() {
         QMessageBox::information(this, "", "You are the initiative!");
     }
 }
+
+void GameLogic::cleanMark() {
+    if (chess1 != nullptr) chess1->changeHighlight(false);
+    chess1 = nullptr;
+    flag = false;
+
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 12; j++)
+            chessboard->changeMovableFlag(i, j, false);
+}
+
 void GameLogic::changePlayer() {
 
     turnCount++;
@@ -55,13 +67,7 @@ void GameLogic::changePlayer() {
     nowPlayer = nextPlayer;
     nextPlayer = p;
 
-    if (chess1 != nullptr) chess1->changeHighlight(false);
-    chess1 = nullptr;
-    flag = false;
-
-    for (int i = 0; i < 5; i++)
-        for (int j = 0; j < 12; j++)
-            chessboard->changeMovableFlag(i, j, false);
+    cleanMark();
 
     emit render(1);
 
@@ -111,7 +117,7 @@ void GameLogic::checkGameboard() {
             case 11:
                 switch(type2) {
                 case 12:
-                    if (nextPlayer->getLandminesRemains() == 0) visitable[i] = 10;
+                    if (mines[nextPlayer->getID()] == 0) visitable[i] = 10;
                     else visitable[i] = 0;
                     break;
                 case 10:
@@ -125,7 +131,7 @@ void GameLogic::checkGameboard() {
             case 9:
                 switch(type2) {
                 case 12:
-                    if (nextPlayer->getLandminesRemains() == 0) visitable[i] = 10;
+                    if (mines[nextPlayer->getID()] == 0) visitable[i] = 10;
                     else visitable[i] = 0;
                     break;
                 case 10:
@@ -142,7 +148,7 @@ void GameLogic::checkGameboard() {
             default:
                 switch(type2) {
                 case 12:
-                    if (nextPlayer->getLandminesRemains() == 0) visitable[i] = 10;
+                    if (mines[nextPlayer->getID()] == 0) visitable[i] = 10;
                     else visitable[i] = 0;
                     break;
                 case 11: case 10:
@@ -251,6 +257,7 @@ void GameLogic::moveChess2(Chess* chess2, int x2, int y2) {
         changeChess(chess1, x2, y2);
         emit sendData("5 " + QS(turnCount) + " " + QS(color) + " " + QS(type));
         emit sendData("g 1");
+        cleanMark();
         return;
     }
     emit sendData("e");
@@ -314,11 +321,12 @@ void GameLogic::setNewColor(int color, int playerID) {
 }
 
 void GameLogic::onMineBoomed(int playerID) {
-    if (nowPlayer->getID() == playerID) {
-        nowPlayer->lostLandmines();
-    } else {
-        nextPlayer->lostLandmines();
-    }
+    mines[playerID]--;
+//    if (nowPlayer->getID() == playerID) {
+//        nowPlayer->lostLandmines();
+//    } else {
+//        nextPlayer->lostLandmines();
+//    }
     if (playerID == id) {
         emit decYourMine();
     } else {

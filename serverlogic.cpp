@@ -9,6 +9,7 @@ ServerLogic::ServerLogic(QWidget *parent) : QWidget(parent) {
 
     isColorGived = false;
     turnCount = 1;
+    mines[0] = mines[1] = 3;
 }
 
 void ServerLogic::setChessboard(Chessboard* chessboard) {
@@ -88,7 +89,8 @@ bool ServerLogic::checkMovable() {
                 case 11:
                     switch(type2) {
                     case 12:
-                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        if (mines[nextPlayer->getID()] == 0) return true;
                         break;
                     case 10:
                         return true;
@@ -101,7 +103,8 @@ bool ServerLogic::checkMovable() {
                 case 9:
                     switch(type2) {
                     case 12:
-                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        if (mines[nextPlayer->getID()] == 0) return true;
                         break;
                     case 10:
                         return true;
@@ -116,7 +119,8 @@ bool ServerLogic::checkMovable() {
                 default:
                     switch(type2) {
                     case 12:
-                        if (nextPlayer->getLandminesRemains() == 0) return true;
+//                        if (nextPlayer->getLandminesRemains() == 0) return true;
+                        if (mines[nextPlayer->getID()] == 0) return true;
                         break;
                     case 11: case 10:
                         break;
@@ -161,6 +165,8 @@ void ServerLogic::gameEnded(int cmd, int id) {
         emit sendData("0 [Server] Game over! You Lose!", id);
         emit sendData("g 1", id);
     }
+    emit sendData("z", 0);
+    emit sendData("z", 1);
 }
 
 void ServerLogic::onChangeChessNULL(QString msg, int x, int y) {
@@ -261,10 +267,16 @@ void ServerLogic::initialize(int id) {
 }
 
 void ServerLogic::onMineBoomed(int id) {
-    if (nowPlayer->getID() == id) {
-        nowPlayer->lostLandmines();
+    mines[id]--;
+    int nowID = nowPlayer->getID();
+    if (nowID == id) {
+        emit sendData("0 [Server] Your team remains " + QString::number(mines[id]) + " landmines!", nowID);
+        emit sendData("0 [Server] Enemy team remains " + QString::number(mines[id]) + " landmines!", 1 - nowID);
+        //nowPlayer->lostLandmines();
     } else {
-        nextPlayer->lostLandmines();
+        emit sendData("0 [Server] Your team remains " + QString::number(mines[id])  + " landmines!", 1 -nowID);
+        emit sendData("0 [Server] Enemy team remains " + QString::number(mines[id])  + " landmines!", nowID);
+        //nextPlayer->lostLandmines();
     }
 
     for (int i = 0; i < 2; i++)

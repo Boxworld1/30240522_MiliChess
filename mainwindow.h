@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow {
 private:
     int id;
     int first;
+    bool gameEnded;
 
     Infoboard* infoboard;
     Gameboard* gameboard;
@@ -52,6 +53,7 @@ private slots:
 
 public slots:
     void newID(int);
+    void onGameEnded();
 };
 
 #endif // MAINWINDOW_H

@@ -49,10 +49,10 @@ void Server::serverUI() {
     });
 
     connect(buttons, &QDialogButtonBox::rejected, this, [this]() {
-        onDisconnect(0);
-        onDisconnect(1);
         sendDataSlot("m 2", 0);
         sendDataSlot("m 2", 1);
+        onDisconnect(0);
+        onDisconnect(1);
         done(QDialog::Rejected);
     });
 
@@ -84,9 +84,10 @@ void Server::gameStart() {
 
 void Server::onDisconnect(int id) {
     sendDataSlot("0 [Server] Client #" + QString::number(id) + " disconnected!", this->id);
-    sendDataSlot("0 [Server] Successfully disconnected!", id);
+    sendDataSlot("0 [Server] Server Closed!", id);
     sendDataSlot("m 3 " + QString::number(id), this->id);
     clientSocket[id] = nullptr;
+    ready[id] = false;
     qDebug() << id << " disconnected\n";
 }
 

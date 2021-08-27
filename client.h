@@ -47,6 +47,7 @@ signals:
     void mineBoomed(int);
     void firstPlayer(int);
     void changeColor(int, int);
+    void gameEnded();
 
 public slots:
     void setIP(QString);

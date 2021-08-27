@@ -24,6 +24,7 @@ void MainWindow::createNetWork() {
     connect(serverlogic, &ServerLogic::sendData, server, &Server::sendDataSlot);
 
     connect(client, &Client::changeID, this, &MainWindow::newID);
+    connect(client, &Client::gameEnded, this, &MainWindow::onGameEnded);
     connect(client, &Client::colorDecided, infoboard, &Infoboard::getColorDecided);
     connect(client, &Client::playerDecided, infoboard, &Infoboard::getPlayerDecided);
     connect(client, &Client::timeRemainDecided, infoboard, &Infoboard::getTimeRemainDecided);
@@ -39,6 +40,7 @@ void MainWindow::createNetWork() {
     connect(client, &Client::changeChessNULL, gamelogic, &GameLogic::onChangeChessNULL);
     connect(client, &Client::changeChess, gamelogic, &GameLogic::onChangeChess);
     connect(client, &Client::start, gameboard, &Gameboard::show);
+    connect(client, &Client::gameEnded, gameboard, &Gameboard::gameEnded);
     connect(client, &Client::start, gamelogic, &GameLogic::checkIsFirst);
     connect(client, &Client::firstPlayer, gamelogic, &GameLogic::setPlayer);
     connect(client, &Client::changeColor, gamelogic, &GameLogic::setNewColor);
@@ -58,6 +60,7 @@ void MainWindow::createNetWork() {
 
 void MainWindow::createGameStats() {
     id = 10;
+    gameEnded = false;
 
     chessboard = new Chessboard();
     infoboard = new Infoboard();
@@ -144,11 +147,11 @@ void MainWindow::connectToServer() {
 }
 
 void MainWindow::start() {
-    client->sendDataSlot("s");
+    if (!gameEnded) client->sendDataSlot("s");
 }
 
 void MainWindow::surrender() {
-    client->sendDataSlot("f");
+    if (!gameEnded) client->sendDataSlot("f");
 }
 
 void MainWindow::newID(int id) {
@@ -158,6 +161,9 @@ void MainWindow::newID(int id) {
     qDebug() << "my ID is "<< id << "\n";
 }
 
+void MainWindow::onGameEnded() {
+    gameEnded = true;
+}
 MainWindow::~MainWindow() {
 
 }

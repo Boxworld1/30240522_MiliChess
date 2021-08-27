@@ -11,6 +11,7 @@ Gameboard::Gameboard(QWidget *parent): QWidget(parent) {
 
     createUI();
     isGameStarted = false;
+    isGameEnded = false;
 
 }
 
@@ -112,6 +113,7 @@ void Gameboard::render(int cmd) {
 void Gameboard::onChessClicked(int i, int j) {
 
     if (!isGameStarted) return;
+    if (isGameEnded) return;
     emit tryMoving(i, j);
     render(1);
 
@@ -121,4 +123,8 @@ void Gameboard::show() {
     qDebug() << "Start render\n";
     isGameStarted = true;
     render(1);
+}
+
+void Gameboard::gameEnded() {
+    isGameEnded = true;
 }

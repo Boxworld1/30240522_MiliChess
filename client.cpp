@@ -73,10 +73,10 @@ void Client::onConnection() {
 
 void Client::onDisconnection() {
     if (clientSocket == nullptr) return;
+    sendDataSlot("m 0");
     isConnected = false;
     clientSocket->disconnectFromHost();
     clientSocket = nullptr;
-    sendDataSlot("m 0");
     QMessageBox::information(this, "", "Disconnection succeeded!");
 }
 
@@ -141,6 +141,7 @@ void Client::onReadyRead() {
                 break;
             case 2:
                 QMessageBox::information(this, "", "Server Closed!");
+                onDisconnection();
                 break;
             case 3:
                 in >> y;
@@ -186,6 +187,10 @@ void Client::onReadyRead() {
         case 'l':
             in >> x;
             emit mineBoomed(x);
+            break;
+
+        case 'z':
+            emit gameEnded();
             break;
 
         case '0':
